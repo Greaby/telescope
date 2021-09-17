@@ -1,6 +1,6 @@
 var fs = require("fs");
 const MarkdownIt = require("markdown-it");
-const blockEmbedPlugin = require("markdown-it-block-embed");
+const MarkdownItOEmbed = require("markdown-it-oembed");
 const MarkdownItTitle = require("markdown-it-title");
 const MarkdownItMeta = require("markdown-it-meta");
 
@@ -13,12 +13,10 @@ module.exports = async (file_path) => {
     });
     md.use(MarkdownItMeta);
     md.use(MarkdownItTitle);
-    md.use(blockEmbedPlugin, {
-        containerClassName: "embed",
-    });
+    md.use(MarkdownItOEmbed);
 
     let env = {};
-    let render = md.render(content, env);
+    let render = await md.renderAsync(content, env);
 
     return { render, env, meta: md.meta };
 };

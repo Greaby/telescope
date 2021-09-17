@@ -7,6 +7,6 @@ tags: [Tag 1, Tag 2, Tag 3]
 
 Content
 
-@[youtube](YOUTUBE_LINK)
+![youtube](YOUTUBE_LINK)
 
-@[spotify](SPOTIFY_LINK)
+![spotify](SPOTIFY_LINK)
