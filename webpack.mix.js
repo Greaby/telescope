@@ -9,6 +9,7 @@ const generateSigmaJSON = require("./src/javascript/sigma_json");
 const parseMarkdownFile = require("./src/javascript/parse_markdown_file");
 
 const timestamp = Date.now();
+const BASE_SIZE = 3;
 
 const DIR_DIST = "dist";
 const DATA_FOLDER = "data";
@@ -186,6 +187,15 @@ const parseFiles = async () => {
         }
     });
 
+    // set node size
+    graph.forEachNode((node, attributes) => {
+        graph.setNodeAttribute(
+            node,
+            "size",
+            Math.round(BASE_SIZE * Math.sqrt(graph.degree(node)))
+        );
+    });
+
     // save main graph
     fs.writeFile(
         `${DIR_DIST}/index.json`,
@@ -264,3 +274,4 @@ mix.webpackConfig({
 });
 mix.sass("src/scss/app.scss", "");
 mix.js("src/javascript/app.js", "");
+mix.disableNotifications();

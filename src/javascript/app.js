@@ -1,8 +1,6 @@
 import Graph from "graphology";
 import Sigma from "sigma";
 
-const BASE_SIZE = 2;
-
 const loadSigma = async (json_file) => {
     let data = await fetch(json_file).then((response) => response.json());
     const graph = new Graph();
@@ -23,11 +21,6 @@ const loadSigma = async (json_file) => {
         }
 
         graph.setNodeAttribute(node, "color", color);
-        graph.setNodeAttribute(
-            node,
-            "size",
-            BASE_SIZE * Math.sqrt(graph.degree(node))
-        );
     });
 
     const settings = {
