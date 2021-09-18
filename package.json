@@ -17,6 +17,7 @@
         "graphology": "^0.21.0",
         "graphology-layout": "^0.4.0",
         "graphology-layout-forceatlas2": "^0.6.1",
+        "graphology-pagerank": "^1.1.0",
         "laravel-mix": "^6.0.29",
         "markdown-it": "^12.2.0",
         "markdown-it-meta": "^0.0.1",

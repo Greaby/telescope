@@ -4,6 +4,7 @@ const fs = require("fs");
 
 const Twig = require("twig");
 const { Graph } = require("graphology");
+const pagerank = require("graphology-pagerank");
 
 const parseMarkdown = require("./parse_markdown");
 const exportGraph = require("./export_graph");
@@ -155,6 +156,7 @@ module.exports = class Telescope {
             });
         }
 
+        pagerank.assign(graph);
         this.calculate_nodes_size();
 
         // save main graph
@@ -168,6 +170,52 @@ module.exports = class Telescope {
 
         // render html files
         this.files_to_render.forEach((data) => {
+            let links = [];
+            let added_nodes = [];
+            if (graph.hasNode(data.id)) {
+                graph.forEachNeighbor(data.id, function (neighbor, attributes) {
+                    if (
+                        graph.getNodeAttribute(neighbor, "type") !== "author" &&
+                        neighbor != data.id &&
+                        !added_nodes.includes(neighbor)
+                    ) {
+                        added_nodes.push(neighbor);
+                        links.push({
+                            type: attributes.type,
+                            slug: attributes.slug,
+                            title: attributes.label,
+                            rank: attributes.pagerank,
+                        });
+                    }
+
+                    graph.forEachNeighbor(
+                        neighbor,
+                        function (secondNeighbor, attributes) {
+                            if (
+                                graph.getNodeAttribute(
+                                    secondNeighbor,
+                                    "type"
+                                ) !== "author" &&
+                                secondNeighbor != data.id &&
+                                !added_nodes.includes(secondNeighbor)
+                            ) {
+                                added_nodes.push(secondNeighbor);
+                                links.push({
+                                    type: attributes.type,
+                                    slug: attributes.slug,
+                                    title: attributes.label,
+                                    rank: attributes.pagerank,
+                                });
+                            }
+                        }
+                    );
+                });
+            }
+
+            links = links
+                .sort((a, b) => (a.rank > b.rank ? -1 : 1))
+                .slice(0, 5);
+
             Twig.renderFile(
                 "./src/template.twig",
                 {
@@ -175,6 +223,7 @@ module.exports = class Telescope {
                     labels: config.labels,
                     title: data.title,
                     content: data.content,
+                    links: links,
                 },
                 (err, html) => {
                     fs.writeFile(

@@ -20,6 +20,24 @@
             <div class="column">
                 <div id="page-content">
                     {{ content }}
+
+                    {% if links %}
+                    <div>
+                        <h3>{{ labels.see_also }}</h3>
+
+                        <ul>
+                            {% for link in links %}
+                            <li>
+                                <a
+                                    href="{{ link.type }}-{{ link.slug }}.html"
+                                    >{{ link.title }}</a
+                                >
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                    {% endif %}
                 </div>
             </div>
         </div>
