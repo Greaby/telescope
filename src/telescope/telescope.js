@@ -146,7 +146,7 @@ module.exports = class Telescope {
             }
         });
 
-        if (config.remove_isolated_tags) {
+        if (config.hide_isolated_tags) {
             graph.nodes().forEach((node) => {
                 if (
                     graph.degree(node) <= config.isolated_tags_threshold &&
