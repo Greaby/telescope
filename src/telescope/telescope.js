@@ -57,8 +57,6 @@ module.exports = class Telescope {
                 console.log(`add node ${slug}`);
                 graph.addNode(id, {
                     label: file_data.env.title,
-                    x: Math.floor(Math.random() * 100),
-                    y: Math.floor(Math.random() * 100),
                     slug: slug,
                     type: "ressource",
                 });
@@ -77,8 +75,6 @@ module.exports = class Telescope {
                     console.log(`add author node ${slug}`);
                     graph.addNode(authorID, {
                         label: author,
-                        x: Math.floor(Math.random() * 100),
-                        y: Math.floor(Math.random() * 100),
                         slug: slug,
                         type: "author",
                     });
@@ -112,8 +108,6 @@ module.exports = class Telescope {
                     console.log(`add tag node ${slug}`);
                     graph.addNode(tagID, {
                         label: tag,
-                        x: Math.floor(Math.random() * 100),
-                        y: Math.floor(Math.random() * 100),
                         slug: slug,
                         type: "tag",
                     });
