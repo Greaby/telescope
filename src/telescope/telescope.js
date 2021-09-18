@@ -40,7 +40,7 @@ module.exports = class Telescope {
             }
 
             const file_data = await parseMarkdown(
-                `${config.folders.data}/ressources/${fileNames[index]}`
+                `${config.folders.ressources}/${fileNames[index]}`
             );
             const { slug, id } = getID(
                 fileNames[index].replace(".md", ""),
@@ -83,9 +83,9 @@ module.exports = class Telescope {
 
                     let content = `<h1>${author}</h1>`;
 
-                    if (fs.existsSync(`data/authors/${slug}.md`)) {
+                    if (fs.existsSync(`${config.folders.authors}/${slug}.md`)) {
                         const author_data = await parseMarkdown(
-                            `data/authors/${slug}.md`
+                            `${config.folders.authors}/${slug}.md`
                         );
 
                         content = author_data.render;
@@ -116,9 +116,9 @@ module.exports = class Telescope {
 
                     let content = `<h1>${tag}</h1>`;
 
-                    if (fs.existsSync(`data/tags/${slug}.md`)) {
+                    if (fs.existsSync(`${config.folders.tags}/${slug}.md`)) {
                         const tag_data = await parseMarkdown(
-                            `data/tags/${slug}.md`
+                            `${config.folders.tags}/${slug}.md`
                         );
 
                         content = tag_data.render;
