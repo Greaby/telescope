@@ -1,3 +1,5 @@
+const config = require("./config");
+
 let mix = require("laravel-mix");
 var fs = require("fs");
 
@@ -66,8 +68,9 @@ const parseFiles = async () => {
             "./src/template.twig",
             {
                 timestamp,
-                content: file_data.render,
+                labels: config.labels,
                 title: file_data.env.title,
+                content: file_data.render,
             },
             (err, html) => {
                 fs.writeFile(
@@ -122,7 +125,12 @@ const parseFiles = async () => {
 
                 Twig.renderFile(
                     "./src/template.twig",
-                    { timestamp, content, title: author },
+                    {
+                        timestamp,
+                        labels: config.labels,
+                        title: author,
+                        content,
+                    },
                     (err, html) => {
                         fs.writeFile(
                             `${DIR_DIST}/author-${slug}.html`,
@@ -162,7 +170,7 @@ const parseFiles = async () => {
 
                 Twig.renderFile(
                     "./src/template.twig",
-                    { timestamp, content, title: tag },
+                    { timestamp, labels: config.labels, title: tag, content },
                     (err, html) => {
                         fs.writeFile(
                             `${DIR_DIST}/tag-${slug}.html`,
@@ -210,7 +218,7 @@ const parseFiles = async () => {
 
     Twig.renderFile(
         "./src/template.twig",
-        { timestamp, content: main_data.render },
+        { timestamp, labels: config.labels, content: main_data.render },
         (err, html) => {
             fs.writeFile(`${DIR_DIST}/index.html`, html, function (err) {
                 if (err) return console.log(err);

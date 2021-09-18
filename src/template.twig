@@ -8,7 +8,9 @@
         <link rel="stylesheet" href="./app.css?{{ timestamp }}" />
 
         <script src="./js/app.js?{{ timestamp }}"></script>
-        <title>{% if title %}{{ title }} - {% endif %}Telescope</title>
+        <title>
+            {% if title %}{{ title }} - {% endif %}{{ labels.project_title }}
+        </title>
     </head>
     <body>
         <div class="row">
@@ -16,7 +18,9 @@
                 <div id="graph-container"></div>
             </div>
             <div class="column">
-                <div id="page-content">{{ content }}</div>
+                <div id="page-content">
+                    {{ content }}
+                </div>
             </div>
         </div>
     </body>
