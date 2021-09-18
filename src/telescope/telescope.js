@@ -9,6 +9,7 @@ const pagerank = require("graphology-pagerank");
 const parseMarkdown = require("./parse_markdown");
 const exportGraph = require("./export_graph");
 const getID = require("./ids");
+const { range } = require("./interpolation");
 
 module.exports = class Telescope {
     files_to_render = [];
@@ -297,14 +298,29 @@ module.exports = class Telescope {
     }
 
     calculate_nodes_size() {
-        const BASE_SIZE = 3;
         const graph = this.graph;
 
+        const ranks = graph.nodes().map((node) => {
+            return graph.getNodeAttribute(node, "pagerank");
+        });
+
+        const min_rank = Math.min(...ranks);
+        const max_rank = Math.max(...ranks);
+
+        // set node size
         graph.forEachNode((node, attributes) => {
             graph.setNodeAttribute(
                 node,
                 "size",
-                Math.round(BASE_SIZE * Math.sqrt(graph.degree(node)))
+                Math.round(
+                    range(
+                        min_rank,
+                        max_rank,
+                        config.graph.node_min_size,
+                        config.graph.node_max_size,
+                        attributes.pagerank
+                    )
+                )
             );
         });
     }
