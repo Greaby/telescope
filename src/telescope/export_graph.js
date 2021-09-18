@@ -4,10 +4,9 @@ module.exports = (graph) => {
     forceAtlas2.assign(graph, {
         iterations: 1000,
         settings: {
-            gravity: 0.5,
-            //adjustSizes: true,
+            gravity: 0.8,
         },
     });
 
-    return graph.export();
+    return JSON.stringify(graph.export());
 };
