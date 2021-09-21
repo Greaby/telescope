@@ -13,11 +13,17 @@
         </title>
     </head>
     <body>
-        <div class="row">
-            <div class="column-2">
-                <div id="graph-container" data-node="{{ node }}"></div>
-            </div>
-            <div class="column">
+        <div class="clearfix">
+            <div
+                class="
+                    col-sm-12 col-md-6 col-lg-4
+                    float-right
+                    p-4
+                    color-shadow-large
+                    rounded-2
+                    overflow-hidden
+                "
+            >
                 <div id="page-content">
                     {{ content }}
 
@@ -28,25 +34,22 @@
                         <span class="Label">{{ tag }}</span>
                         {% endfor %}
                     </div>
-                    {% endif %}
-                    {% if links %}
-                    <div>
-                        <h3>{{ labels.see_also }}</h3>
-
-                        <ul>
-                            {% for link in links %}
-                            <li>
-                                <a
-                                    href="{{ link.type }}-{{ link.slug }}.html"
-                                    >{{ link.title }}</a
-                                >
-                            </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-
+                    {% endif %} {% if links %}
+                    <h3 class="mb-3">{{ labels.see_also }}</h3>
+                    <nav class="menu">
+                        {% for link in links %}
+                        <a
+                            class="menu-item"
+                            href="{{ link.type }}-{{ link.slug }}.html"
+                            >{{ link.title }}</a
+                        >
+                        {% endfor %}
+                    </nav>
                     {% endif %}
                 </div>
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-8 float-left">
+                <div id="graph-container" data-node="{{ node }}"></div>
             </div>
         </div>
     </body>
