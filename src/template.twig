@@ -21,6 +21,14 @@
                 <div id="page-content">
                     {{ content }}
 
+                    {% if tags %}
+                    <div class="tags mb-3">
+                        <h3 class="mb-3">Tags</h3>
+                        {% for tag in tags %}
+                        <span class="Label">{{ tag }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
                     {% if links %}
                     <div>
                         <h3>{{ labels.see_also }}</h3>

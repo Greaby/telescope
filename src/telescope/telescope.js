@@ -53,6 +53,7 @@ module.exports = class Telescope {
                 title: file_data.env.title,
                 slug: slug,
                 content: file_data.render,
+                tags: file_data.meta.tags.sort(),
             });
 
             if (!graph.hasNode(id)) {
@@ -143,6 +144,8 @@ module.exports = class Telescope {
             if (graph.hasNode(target_id)) {
                 console.log(`add citation ${source_id}->${slug}`);
                 graph.addEdge(source_id, target_id);
+            } else {
+                console.log(`citation ${source_id}: ${slug} not found`);
             }
         });
 
@@ -225,6 +228,7 @@ module.exports = class Telescope {
                     title: data.title,
                     content: data.content,
                     links: links,
+                    tags: data.tags,
                     node: data.id,
                 },
                 (err, html) => {
