@@ -225,6 +225,7 @@ module.exports = class Telescope {
                     title: data.title,
                     content: data.content,
                     links: links,
+                    node: data.id,
                 },
                 (err, html) => {
                     fs.writeFile(
