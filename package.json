@@ -31,8 +31,5 @@
         "slugify": "^1.6.0",
         "stream-http": "^3.2.0",
         "twig": "^1.15.4"
-    },
-    "dependencies": {
-        "@primer/css": "^17.11.0"
     }
 }

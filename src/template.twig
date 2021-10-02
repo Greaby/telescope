@@ -13,42 +13,37 @@
         </title>
     </head>
     <body>
-        <div class="clearfix">
-            <div
-                class="
-                    col-sm-12 col-md-6 col-lg-4
-                    float-right
-                    p-4
-                    color-shadow-large
-                    rounded-2
-                    overflow-hidden
-                "
-            >
-                <div id="page-content">
-                    {{ content }}
+        <header>
+            <a href="index.html">
+                <h3>{{ labels.project_title }}</h3>
+            </a>
+        </header>
 
-                    {% if tags %}
-                    <div class="tags mb-3">
-                        <h3 class="mb-3">Tags</h3>
-                        {% for tag in tags %}
-                        <span class="Label">{{ tag }}</span>
-                        {% endfor %}
-                    </div>
-                    {% endif %} {% if links %}
-                    <h3 class="mb-3">{{ labels.see_also }}</h3>
-                    <nav class="menu">
-                        {% for link in links %}
-                        <a
-                            class="menu-item"
-                            href="{{ link.type }}-{{ link.slug }}.html"
-                            >{{ link.title }}</a
-                        >
-                        {% endfor %}
-                    </nav>
-                    {% endif %}
+        <div class="row">
+            <div class="column-1">
+                <div class="content">{{ content }}</div>
+
+                {% if tags %}
+                <div class="tag-container">
+                    <h3>Tags</h3>
+                    {% for tag in tags %}
+                    <span class="tag">{{ tag }}</span>
+                    {% endfor %}
                 </div>
+                {% endif %} {% if links %}
+                <h3>{{ labels.see_also }}</h3>
+                <ul>
+                    {% for link in links %}
+                    <li>
+                        <a href="{{ link.type }}-{{ link.slug }}.html">{{
+                            link.title
+                        }}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
             </div>
-            <div class="col-sm-12 col-md-6 col-lg-8 float-left">
+            <div class="column-2">
                 <div id="graph-container" data-node="{{ node }}"></div>
             </div>
         </div>
