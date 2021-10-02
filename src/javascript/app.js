@@ -37,6 +37,7 @@ const loadSigma = async (json_file) => {
 
     const settings = {
         labelRenderedSizeThreshold: 15,
+        defaultEdgeColor: "#e2e8f0",
     };
 
     const renderer = new Sigma(graph, container, settings);
