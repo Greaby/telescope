@@ -1,4 +1,6 @@
 module.exports = {
+    base_url: "https://github.com/Greaby/telescope/",
+
     folders: {
         dist: "dist",
         data: "data",
