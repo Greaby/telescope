@@ -13,6 +13,8 @@ const { range } = require("./interpolation");
 
 const exportSitemamp = require("./export_sitemap");
 
+const calculate_pagerank = require("./calculate_pagerank");
+
 module.exports = class Telescope {
     files_to_render = [];
 
@@ -159,22 +161,13 @@ module.exports = class Telescope {
                     graph.degree(node) <= config.isolated_tags_threshold &&
                     graph.getNodeAttribute(node, "type") === "tag"
                 ) {
-                    graph.dropNode(node);
+                    graph.setNodeAttribute(node, "isolated", true);
                 }
             });
         }
 
-        pagerank.assign(graph);
+        calculate_pagerank(graph);
         this.calculate_nodes_size();
-
-        // save main graph
-        fs.writeFile(
-            `${config.folders.dist}/index.json`,
-            exportGraph(graph),
-            function (err) {
-                if (err) return console.log(err);
-            }
-        );
 
         // render html files
         this.files_to_render.forEach((data) => {
@@ -278,11 +271,12 @@ module.exports = class Telescope {
         graph.forEachNode((node, attributes) => {
             const subGraph = new Graph();
 
-            subGraph.addNode(node, attributes);
+            subGraph.addNode(node, { ...attributes });
+            subGraph.removeNodeAttribute(node, "isolated");
 
             graph.forEachNeighbor(node, function (neighbor, attributes) {
                 if (!subGraph.hasNode(neighbor)) {
-                    subGraph.addNode(neighbor, attributes);
+                    subGraph.addNode(neighbor, { ...attributes });
                 }
                 subGraph.addEdge(node, neighbor);
 
@@ -290,7 +284,7 @@ module.exports = class Telescope {
                     neighbor,
                     function (secondNeighbor, attributes) {
                         if (!subGraph.hasNode(secondNeighbor)) {
-                            subGraph.addNode(secondNeighbor, attributes);
+                            subGraph.addNode(secondNeighbor, { ...attributes });
                         }
 
                         subGraph.addEdge(neighbor, secondNeighbor);
@@ -310,14 +304,26 @@ module.exports = class Telescope {
                 }
             );
         });
+
+        // save main graph
+        fs.writeFile(
+            `${config.folders.dist}/index.json`,
+            exportGraph(graph),
+            function (err) {
+                if (err) return console.log(err);
+            }
+        );
     }
 
     calculate_nodes_size() {
         const graph = this.graph;
 
-        const ranks = graph.nodes().map((node) => {
-            return graph.getNodeAttribute(node, "pagerank");
-        });
+        const ranks = graph
+            .nodes()
+            .map((node) => {
+                return graph.getNodeAttribute(node, "pagerank");
+            })
+            .filter((x) => x);
 
         const min_rank = Math.min(...ranks);
         const max_rank = Math.max(...ranks);

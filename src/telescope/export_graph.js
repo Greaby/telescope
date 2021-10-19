@@ -4,6 +4,12 @@ const random = require("graphology-layout/random");
 module.exports = (graph) => {
     random.assign(graph);
 
+    graph.nodes().forEach((node) => {
+        if (graph.getNodeAttribute(node, "isolated")) {
+            graph.dropNode(node);
+        }
+    });
+
     forceAtlas2.assign(graph, {
         iterations: 1000,
         settings: {
