@@ -3,9 +3,9 @@ const slugify = require("slugify");
 let id_index = 0;
 let node_ids = [];
 
-module.exports = (title, type = null) => {
+module.exports = (title, cat = null) => {
     let slug = slugify(title, { lower: true, strict: true });
-    let key = [type, slug].filter((n) => n).join("-");
+    let key = [cat, slug].filter((n) => n).join("-");
 
     let id = null;
     if (key !== null && node_ids[key] !== undefined) {

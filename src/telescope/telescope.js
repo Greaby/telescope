@@ -56,7 +56,7 @@ module.exports = class Telescope {
             );
 
             this.files_to_render.push({
-                type: "ressource",
+                cat: "ressource",
                 id: id,
                 title: file_data.env.title,
                 slug: slug,
@@ -69,14 +69,14 @@ module.exports = class Telescope {
                 graph.addNode(id, {
                     label: file_data.env.title,
                     slug: slug,
-                    type: "ressource",
+                    cat: "ressource",
                 });
             }
 
             if (file_data.meta.citations) {
                 file_data.meta.citations.forEach((citation) => {
-                    let [type, slug] = citation.split(":");
-                    citations.push([id, type, slug]);
+                    let [cat, slug] = citation.split(":");
+                    citations.push([id, cat, slug]);
                 });
             }
 
@@ -87,7 +87,7 @@ module.exports = class Telescope {
                     graph.addNode(authorID, {
                         label: author,
                         slug: slug,
-                        type: "author",
+                        cat: "author",
                     });
 
                     let content = `<h1>${author}</h1>`;
@@ -101,7 +101,7 @@ module.exports = class Telescope {
                     }
 
                     this.files_to_render.push({
-                        type: "author",
+                        cat: "author",
                         id: authorID,
                         title: author,
                         slug: slug,
@@ -120,7 +120,7 @@ module.exports = class Telescope {
                     graph.addNode(tagID, {
                         label: tag,
                         slug: slug,
-                        type: "tag",
+                        cat: "tag",
                     });
 
                     let content = `<h1>${tag}</h1>`;
@@ -134,7 +134,7 @@ module.exports = class Telescope {
                     }
 
                     this.files_to_render.push({
-                        type: "tag",
+                        cat: "tag",
                         id: tagID,
                         title: tag,
                         slug: slug,
@@ -146,8 +146,8 @@ module.exports = class Telescope {
             });
         }
 
-        citations.forEach(([source_id, type, slug]) => {
-            let { id: target_id } = getID(slug, type);
+        citations.forEach(([source_id, cat, slug]) => {
+            let { id: target_id } = getID(slug, cat);
 
             if (graph.hasNode(target_id)) {
                 console.log(`add citation ${source_id}->${slug}`);
@@ -161,7 +161,7 @@ module.exports = class Telescope {
             graph.nodes().forEach((node) => {
                 if (
                     graph.degree(node) <= config.isolated_tags_threshold &&
-                    graph.getNodeAttribute(node, "type") === "tag"
+                    graph.getNodeAttribute(node, "cat") === "tag"
                 ) {
                     graph.setNodeAttribute(node, "isolated", true);
                 }
@@ -178,13 +178,13 @@ module.exports = class Telescope {
             if (graph.hasNode(data.id)) {
                 graph.forEachNeighbor(data.id, function (neighbor, attributes) {
                     if (
-                        graph.getNodeAttribute(neighbor, "type") !== "author" &&
+                        graph.getNodeAttribute(neighbor, "cat") !== "author" &&
                         neighbor != data.id &&
                         !added_nodes.includes(neighbor)
                     ) {
                         added_nodes.push(neighbor);
                         links.push({
-                            type: attributes.type,
+                            cat: attributes.cat,
                             slug: attributes.slug,
                             title: attributes.label,
                             rank: attributes.pagerank,
@@ -197,14 +197,14 @@ module.exports = class Telescope {
                             if (
                                 graph.getNodeAttribute(
                                     secondNeighbor,
-                                    "type"
+                                    "cat"
                                 ) !== "author" &&
                                 secondNeighbor != data.id &&
                                 !added_nodes.includes(secondNeighbor)
                             ) {
                                 added_nodes.push(secondNeighbor);
                                 links.push({
-                                    type: attributes.type,
+                                    cat: attributes.cat,
                                     slug: attributes.slug,
                                     title: attributes.label,
                                     rank: attributes.pagerank,
@@ -220,7 +220,7 @@ module.exports = class Telescope {
                 .slice(0, 5);
 
             sitemap_links.push({
-                url: `${data.type}-${data.slug}.html`,
+                url: `${data.cat}-${data.slug}.html`,
             });
             Twig.renderFile(
                 "./src/template.twig",
@@ -239,7 +239,7 @@ module.exports = class Telescope {
                     });
 
                     fs.writeFile(
-                        `${config.folders.dist}/${data.type}-${data.slug}.html`,
+                        `${config.folders.dist}/${data.cat}-${data.slug}.html`,
                         html,
                         function (err) {
                             if (err) return console.log(err);
@@ -302,7 +302,7 @@ module.exports = class Telescope {
                 );
             });
 
-            let file_name = [attributes.type, attributes.slug]
+            let file_name = [attributes.cat, attributes.slug]
                 .filter((n) => n)
                 .join("-");
 

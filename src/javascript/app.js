@@ -20,7 +20,7 @@ const loadSigma = async (json_file) => {
             return;
         }
 
-        switch (attributes.type) {
+        switch (attributes.cat) {
             case "ressource":
                 color = "#D24335";
                 break;
@@ -44,8 +44,8 @@ const loadSigma = async (json_file) => {
 
     renderer.on("clickNode", ({ node, captor, event }) => {
         let slug = graph.getNodeAttribute(node, "slug");
-        let type = graph.getNodeAttribute(node, "type");
-        window.location = `./${type}-${slug}.html`;
+        let cat = graph.getNodeAttribute(node, "cat");
+        window.location = `./${cat}-${slug}.html`;
     });
 };
 
