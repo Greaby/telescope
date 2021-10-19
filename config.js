@@ -12,6 +12,7 @@ module.exports = {
     labels: {
         project_title: "Telescope",
         see_also: "See also",
+        search: "Search",
     },
 
     graph: {

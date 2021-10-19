@@ -3,18 +3,17 @@ const config = require("../../config");
 const fs = require("fs");
 
 const Twig = require("twig");
-const { minify } = require("html-minifier");
-
 const { Graph } = require("graphology");
-const pagerank = require("graphology-pagerank");
 
 const parseMarkdown = require("./parse_markdown");
 const exportGraph = require("./export_graph");
 const getID = require("./ids");
 const { range } = require("./interpolation");
 
-const exportSitemamp = require("./export_sitemap");
+const { minify } = require("html-minifier");
 
+const exportSitemamp = require("./export_sitemap");
+const exportSearch = require("./export_search");
 const calculate_pagerank = require("./calculate_pagerank");
 
 module.exports = class Telescope {
@@ -37,7 +36,7 @@ module.exports = class Telescope {
 
         const graph = this.graph;
 
-        let sitemap_links = [];
+        let export_links = [];
 
         const fileNames = await fs.promises.readdir(config.folders.ressources);
 
@@ -219,14 +218,15 @@ module.exports = class Telescope {
                 .sort((a, b) => (a.rank > b.rank ? -1 : 1))
                 .slice(0, 5);
 
-            sitemap_links.push({
+            export_links.push({
+                title: data.title,
                 url: `${data.cat}-${data.slug}.html`,
             });
             Twig.renderFile(
                 "./src/template.twig",
                 {
+                    ...config,
                     timestamp: this.timestamp,
-                    labels: config.labels,
                     title: data.title,
                     content: data.content,
                     links: links,
@@ -252,12 +252,12 @@ module.exports = class Telescope {
         // save index.html
         let main_data = await parseMarkdown(`${config.folders.data}/index.md`);
 
-        sitemap_links.push({ url: "index.html" });
+        export_links.push({ url: "index.html" });
         Twig.renderFile(
             "./src/template.twig",
             {
+                ...config,
                 timestamp: this.timestamp,
-                labels: config.labels,
                 content: main_data.render,
             },
             (err, html) => {
@@ -275,7 +275,8 @@ module.exports = class Telescope {
             }
         );
 
-        exportSitemamp(sitemap_links);
+        exportSitemamp(export_links);
+        exportSearch(export_links);
 
         // save sub graphs
         graph.forEachNode((node, attributes) => {

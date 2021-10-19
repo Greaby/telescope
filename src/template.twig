@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ language }}">
     <head>
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -13,10 +13,18 @@
         </title>
     </head>
     <body>
+        <ul class="search-results"></ul>
+
         <header>
             <a href="index.html">
                 <h3>{{ labels.project_title }}</h3>
             </a>
+
+            <input
+                type="search"
+                name="search"
+                placeholder="{{ labels.search }}"
+            />
         </header>
 
         <div class="row">

@@ -1,0 +1,29 @@
+input[type="search"] {
+    width: 276px;
+    height: 32px;
+    padding: 0 1rem;
+}
+
+.search-results {
+    display: none;
+
+    position: absolute;
+    right: 0;
+    top: 57px;
+
+    background-color: #ffffffee;
+
+    margin: 0;
+    padding: 22px 32px;
+    z-index: 100;
+    width: 340px;
+
+    &.active {
+        display: inherit;
+    }
+
+    li {
+        list-style: none;
+        padding: 10px 0;
+    }
+}
