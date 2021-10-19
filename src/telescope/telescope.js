@@ -3,6 +3,8 @@ const config = require("../../config");
 const fs = require("fs");
 
 const Twig = require("twig");
+const { minify } = require("html-minifier");
+
 const { Graph } = require("graphology");
 const pagerank = require("graphology-pagerank");
 
@@ -232,6 +234,10 @@ module.exports = class Telescope {
                     node: data.id,
                 },
                 (err, html) => {
+                    html = minify(html, {
+                        collapseWhitespace: true,
+                    });
+
                     fs.writeFile(
                         `${config.folders.dist}/${data.type}-${data.slug}.html`,
                         html,
@@ -255,6 +261,10 @@ module.exports = class Telescope {
                 content: main_data.render,
             },
             (err, html) => {
+                html = minify(html, {
+                    collapseWhitespace: true,
+                });
+
                 fs.writeFile(
                     `${config.folders.dist}/index.html`,
                     html,
