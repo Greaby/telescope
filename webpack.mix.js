@@ -19,4 +19,5 @@ mix.webpackConfig({
 });
 mix.sass("src/scss/app.scss", "");
 mix.js("src/javascript/app.js", "");
+mix.copy("src/static", `${config.folders.dist}/static`);
 mix.disableNotifications();
