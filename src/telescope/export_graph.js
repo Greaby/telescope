@@ -1,21 +1,13 @@
-const forceAtlas2 = require("graphology-layout-forceatlas2");
-const random = require("graphology-layout/random");
+const calculate_force_atlas = require("./calculate_force_atlas");
 
 module.exports = (graph) => {
-    random.assign(graph);
-
     graph.forEachNode((node, attributes) => {
         if (attributes.isolated) {
             graph.dropNode(node);
         }
     });
 
-    forceAtlas2.assign(graph, {
-        iterations: 1000,
-        settings: {
-            gravity: 0.8,
-        },
-    });
+    calculate_force_atlas(graph);
 
     // Optimization of the JSON file size
     graph.forEachNode((node, _attributes) => {

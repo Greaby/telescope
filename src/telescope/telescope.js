@@ -18,6 +18,7 @@ const { minify } = require("html-minifier");
 const exportSitemamp = require("./export_sitemap");
 const exportSearch = require("./export_search");
 const calculate_pagerank = require("./calculate_pagerank");
+const get_kd_tree = require("./get_kd_tree");
 
 module.exports = class Telescope {
     files_to_render = [];
@@ -173,53 +174,69 @@ module.exports = class Telescope {
         calculate_pagerank(graph);
         this.calculate_nodes_size();
 
+        const [kd_tree, tree_graph] = get_kd_tree(graph);
+
+        // save main graph
+        fs.writeFile(
+            `${config.folders.dist}/index.json`,
+            JSON.stringify(tree_graph.export()),
+            function (err) {
+                if (err) return console.log(err);
+            }
+        );
+
         // render html files
         this.files_to_render.forEach((data) => {
-            let links = [];
+            const links = kd_tree
+                .nearest(
+                    {
+                        x: tree_graph.hasNode(data.id)
+                            ? tree_graph.getNodeAttribute(data.id, "x")
+                            : 0,
+                        y: tree_graph.hasNode(data.id)
+                            ? tree_graph.getNodeAttribute(data.id, "y")
+                            : 0,
+                    },
+                    6
+                )
+                .filter(([item, _distance]) => item.id != data.id)
+                .sort(
+                    ([_a, a_distance], [_b, b_distance]) =>
+                        a_distance - b_distance
+                )
+                .map(([item, _distance]) => {
+                    return {
+                        cat: graph.getNodeAttribute(item.id, "cat"),
+                        slug: graph.getNodeAttribute(item.id, "slug"),
+                        title: graph.getNodeAttribute(item.id, "label"),
+                    };
+                });
+
             let added_nodes = [];
             if (graph.hasNode(data.id)) {
                 graph.forEachNeighbor(data.id, function (neighbor, attributes) {
                     if (
-                        graph.getNodeAttribute(neighbor, "cat") !== "author" &&
+                        attributes.cat !== "author" &&
                         neighbor != data.id &&
                         !added_nodes.includes(neighbor)
                     ) {
                         added_nodes.push(neighbor);
-                        links.push({
-                            cat: attributes.cat,
-                            slug: attributes.slug,
-                            title: attributes.label,
-                            rank: attributes.pagerank,
-                        });
                     }
 
                     graph.forEachNeighbor(
                         neighbor,
                         function (secondNeighbor, attributes) {
                             if (
-                                graph.getNodeAttribute(
-                                    secondNeighbor,
-                                    "cat"
-                                ) !== "author" &&
+                                attributes.cat !== "author" &&
                                 secondNeighbor != data.id &&
                                 !added_nodes.includes(secondNeighbor)
                             ) {
                                 added_nodes.push(secondNeighbor);
-                                links.push({
-                                    cat: attributes.cat,
-                                    slug: attributes.slug,
-                                    title: attributes.label,
-                                    rank: attributes.pagerank,
-                                });
                             }
                         }
                     );
                 });
             }
-
-            links = links
-                .sort((a, b) => (a.rank > b.rank ? -1 : 1))
-                .slice(0, 5);
 
             export_links.push({
                 title: data.title,
@@ -318,15 +335,6 @@ module.exports = class Telescope {
                 }
             );
         });
-
-        // save main graph
-        fs.writeFile(
-            `${config.folders.dist}/index.json`,
-            exportGraph(graph),
-            function (err) {
-                if (err) return console.log(err);
-            }
-        );
     }
 
     calculate_nodes_size() {
