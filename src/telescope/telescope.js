@@ -58,6 +58,9 @@ module.exports = class Telescope {
                 "ressource"
             );
 
+            if (!file_data.meta.authors) {
+                file_data.meta.authors = [];
+            }
             const authors = file_data.meta.authors.sort().map((author) => {
                 let { slug } = getID(author, "author");
                 return {
@@ -66,6 +69,9 @@ module.exports = class Telescope {
                 };
             });
 
+            if (!file_data.meta.tags) {
+                file_data.meta.tags = [];
+            }
             const tags = file_data.meta.tags.sort().map((tag) => {
                 const { slug } = getID(tag, "tag");
                 return {
