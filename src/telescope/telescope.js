@@ -58,13 +58,30 @@ module.exports = class Telescope {
                 "ressource"
             );
 
+            const authors = file_data.meta.authors.sort().map((author) => {
+                let { slug } = getID(author, "author");
+                return {
+                    link: `author-${slug}.html`,
+                    title: author,
+                };
+            });
+
+            const tags = file_data.meta.tags.sort().map((tag) => {
+                const { slug } = getID(tag, "tag");
+                return {
+                    link: `tag-${slug}.html`,
+                    title: tag,
+                };
+            });
+
             this.files_to_render.push({
                 cat: "ressource",
                 id: id,
                 title: file_data.env.title,
                 slug: slug,
                 content: file_data.render,
-                tags: file_data.meta.tags.sort(),
+                authors: authors,
+                tags: tags,
             });
 
             if (!graph.hasNode(id)) {
@@ -250,6 +267,7 @@ module.exports = class Telescope {
                     title: data.title,
                     content: data.content,
                     links: links,
+                    authors: data.authors,
                     tags: data.tags,
                     node: data.id,
                 },

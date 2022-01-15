@@ -15,6 +15,8 @@ module.exports = {
         project_title: "Telescope",
         see_also: "See also",
         search: "Search",
+        tags: "Tags",
+        authors: "Authors",
     },
 
     graph: {

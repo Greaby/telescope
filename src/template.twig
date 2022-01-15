@@ -33,11 +33,20 @@
             <div class="column-1">
                 <div class="content">{{ content }}</div>
 
-                {% if tags %}
+                {% if authors %}
                 <div class="tag-container">
-                    <h3>Tags</h3>
+                    <h3>{{ labels.authors }}</h3>
+                    {% for author in authors %}
+                    <a href="{{ author.link }}" class="tag">{{
+                        author.title
+                    }}</a>
+                    {% endfor %}
+                </div>
+                {% endif %} {% if tags %}
+                <div class="tag-container">
+                    <h3>{{ labels.tags }}</h3>
                     {% for tag in tags %}
-                    <span class="tag">{{ tag }}</span>
+                    <a href="{{ tag.link }}" class="tag">{{ tag.title }}</a>
                     {% endfor %}
                 </div>
                 {% endif %} {% if links %}
