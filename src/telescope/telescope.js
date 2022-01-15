@@ -1,5 +1,8 @@
 const config = require("../../config");
 
+const seedrandom = require("seedrandom");
+seedrandom(config.seed, { global: true });
+
 const fs = require("fs");
 
 const Twig = require("twig");
