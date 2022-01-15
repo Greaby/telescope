@@ -14,8 +14,8 @@
     "devDependencies": {
         "@babel/preset-env": "^7.15.8",
         "gh-pages": "^3.2.3",
-        "graphology-layout": "^0.4.0",
-        "graphology-layout-forceatlas2": "^0.6.1",
+        "graphology-layout": "^0.5.0",
+        "graphology-layout-forceatlas2": "^0.8.1",
         "graphology-pagerank": "^1.1.0",
         "html-minifier": "^4.0.0",
         "laravel-mix": "^6.0.34",
@@ -33,7 +33,7 @@
     },
     "dependencies": {
         "fuse.js": "^6.4.6",
-        "graphology": "^0.21.0",
-        "sigma": "^2.0.0"
+        "graphology": "^0.23.2",
+        "sigma": "^2.1.3"
     }
 }
