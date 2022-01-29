@@ -4,7 +4,7 @@ module.exports = (graph) => {
     let rank_graph = graph.copy();
 
     rank_graph.forEachNode((node, attributes) => {
-        if (attributes.isolated) {
+        if (attributes.hidden) {
             rank_graph.dropNode(node);
         }
     });

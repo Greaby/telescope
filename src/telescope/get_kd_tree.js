@@ -9,7 +9,7 @@ module.exports = (graph) => {
     let kd_tree_graph = graph.copy();
 
     kd_tree_graph.forEachNode((node, attributes) => {
-        if (attributes.isolated) {
+        if (attributes.hidden) {
             kd_tree_graph.dropNode(node);
         }
     });

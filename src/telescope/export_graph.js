@@ -2,7 +2,7 @@ const calculate_force_atlas = require("./calculate_force_atlas");
 
 module.exports = (graph) => {
     graph.forEachNode((node, attributes) => {
-        if (attributes.isolated) {
+        if (attributes.hidden) {
             graph.dropNode(node);
         }
     });

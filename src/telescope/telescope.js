@@ -103,20 +103,21 @@ module.exports = class Telescope {
             }
 
             Object.entries(metadata).forEach(([cat, data]) => {
-                const display_on_graph =
-                    !config.metadata[cat] ||
-                    config.metadata[cat].display_on_graph;
-
                 data.forEach(async (item) => {
                     if (!graph.hasNode(item.id)) {
                         console.log(`add node type ${cat}: ${item.slug}`);
 
-                        if (display_on_graph) {
-                            graph.addNode(item.id, {
-                                label: item.title,
-                                slug: item.slug,
-                                cat: cat,
-                            });
+                        graph.addNode(item.id, {
+                            label: item.title,
+                            slug: item.slug,
+                            cat: cat,
+                        });
+
+                        if (
+                            config.metadata[cat] &&
+                            !config.metadata[cat].display_on_graph
+                        ) {
+                            graph.setNodeAttribute(item.id, "hidden", true);
                         }
 
                         let content = `<h1>${item.title}</h1>`;
@@ -140,10 +141,8 @@ module.exports = class Telescope {
                         });
                     }
 
-                    if (display_on_graph) {
-                        graph.addEdge(ressource_id, item.id);
-                        graph.addEdge(item.id, ressource_id);
-                    }
+                    graph.addEdge(ressource_id, item.id);
+                    graph.addEdge(item.id, ressource_id);
                 });
             });
         }
@@ -165,7 +164,7 @@ module.exports = class Telescope {
                     graph.degree(node) <= config.isolated_metadata_threshold &&
                     attributes.cat !== "ressource"
                 ) {
-                    graph.setNodeAttribute(node, "isolated", true);
+                    graph.setNodeAttribute(node, "hidden", true);
                 }
             });
         }
@@ -273,7 +272,7 @@ module.exports = class Telescope {
             const subGraph = new Graph();
 
             subGraph.addNode(node, { ...attributes });
-            subGraph.removeNodeAttribute(node, "isolated");
+            subGraph.removeNodeAttribute(node, "hidden");
 
             graph.forEachNeighbor(node, function (neighbor, attributes) {
                 if (!subGraph.hasNode(neighbor)) {
