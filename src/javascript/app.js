@@ -3,9 +3,29 @@ import Sigma from "sigma";
 import Fuse from "fuse.js";
 import config from "../../config";
 
+let colors = {};
+const get_color = (category) => {
+    if (colors[category]) {
+        return colors[category];
+    }
+
+    let hash = 0;
+    for (let i = 0; i < category.length; i++) {
+        hash = category.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    let color = "#";
+    for (let i = 0; i < 3; i++) {
+        let value = (hash >> (i * 8)) & 0xff;
+        color += ("00" + value.toString(16)).substr(-2);
+    }
+
+    colors[category] = color;
+    return color;
+};
+
 const loadSigma = async (json_file) => {
     const container = document.querySelector("#graph-container");
-    const currentNode = container.dataset.node;
+    const current_node = container.dataset.node;
 
     const data = await fetch(json_file).then((response) => response.json());
 
@@ -13,27 +33,24 @@ const loadSigma = async (json_file) => {
     graph.import(data);
 
     graph.forEachNode((node, attributes) => {
-        let color = null;
-
-        if (node === currentNode) {
-            graph.setNodeAttribute(node, "color", "#F2C84B");
+        if (node === current_node) {
+            graph.setNodeAttribute(node, "color", config.current_node.color);
             graph.setNodeAttribute(node, "size", config.graph.node_max_size);
             return;
         }
 
-        switch (attributes.cat) {
-            case "ressource":
-                color = "#D24335";
-                break;
-            case "tag":
-                color = "#87AA66";
-                break;
-            case "author":
-                color = "#4CB3D2";
-                break;
+        if (attributes.cat === "ressource") {
+            graph.setNodeAttribute(node, "color", config.ressource.color);
+            return;
         }
 
-        graph.setNodeAttribute(node, "color", color);
+        let metadata_config = config.metadata[attributes.cat];
+        if (metadata_config && metadata_config.color) {
+            graph.setNodeAttribute(node, "color", metadata_config.color);
+            return;
+        }
+
+        graph.setNodeAttribute(node, "color", get_color(attributes.cat));
     });
 
     const settings = {

@@ -1,5 +1,6 @@
 module.exports = {
     base_url: "https://github.com/Greaby/telescope/",
+    language: "en",
 
     seed: "telescope",
 
@@ -7,23 +8,33 @@ module.exports = {
         dist: "dist",
         data: "data",
         ressources: "data/ressources",
-        tags: "data/tags",
-        authors: "data/authors",
     },
 
     labels: {
         project_title: "Telescope",
         see_also: "See also",
         search: "Search",
-        tags: "Tags",
-        authors: "Authors",
     },
+
+    ressource: {
+        color: "#D24335",
+    },
+
+    current_node: {
+        color: "#F2C84B",
+    },
+
+    metadata: {
+        // tag: {
+        //     label: "Tags",
+        //     color: "#87AA66",
+        // },
+    },
+    hide_isolated_metadata: false,
+    isolated_metadata_threshold: 2,
 
     graph: {
         node_min_size: 5,
         node_max_size: 25,
     },
-
-    hide_isolated_tags: false,
-    isolated_tags_threshold: 2,
 };

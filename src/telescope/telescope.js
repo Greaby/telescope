@@ -53,48 +53,44 @@ module.exports = class Telescope {
             const file_data = await parseMarkdown(
                 `${config.folders.ressources}/${fileNames[index]}`
             );
-            const { slug, id } = getID(
+            const { slug: ressource_slug, id: ressource_id } = getID(
                 fileNames[index].replace(".md", ""),
                 "ressource"
             );
 
-            if (!file_data.meta.authors) {
-                file_data.meta.authors = [];
-            }
-            const authors = file_data.meta.authors.sort().map((author) => {
-                let { slug } = getID(author, "author");
-                return {
-                    link: `author-${slug}.html`,
-                    title: author,
-                };
-            });
+            const metadata = {};
+            Object.entries(file_data.meta)
+                .filter(([cat]) => !["citations", "ressource"].includes(cat))
+                .forEach(([cat, data]) => {
+                    if (!Array.isArray(data)) {
+                        data = [data];
+                    }
 
-            if (!file_data.meta.tags) {
-                file_data.meta.tags = [];
-            }
-            const tags = file_data.meta.tags.sort().map((tag) => {
-                const { slug } = getID(tag, "tag");
-                return {
-                    link: `tag-${slug}.html`,
-                    title: tag,
-                };
-            });
+                    metadata[cat] = data.map((item) => {
+                        let { slug, id } = getID(item, cat);
+                        return {
+                            id: id,
+                            title: item,
+                            slug: slug,
+                            link: `${cat}-${slug}.html`,
+                        };
+                    });
+                });
 
             this.files_to_render.push({
                 cat: "ressource",
-                id: id,
+                id: ressource_id,
                 title: file_data.env.title,
-                slug: slug,
+                slug: ressource_slug,
                 content: file_data.render,
-                authors: authors,
-                tags: tags,
+                metadata: metadata,
             });
 
-            if (!graph.hasNode(id)) {
-                console.log(`add node ${slug}`);
-                graph.addNode(id, {
+            if (!graph.hasNode(ressource_id)) {
+                console.log(`add node type ressource: ${ressource_slug}`);
+                graph.addNode(ressource_id, {
                     label: file_data.env.title,
-                    slug: slug,
+                    slug: ressource_slug,
                     cat: "ressource",
                 });
             }
@@ -102,73 +98,45 @@ module.exports = class Telescope {
             if (file_data.meta.citations) {
                 file_data.meta.citations.forEach((citation) => {
                     let [cat, slug] = citation.split(":");
-                    citations.push([id, cat, slug]);
+                    citations.push([ressource_id, cat, slug]);
                 });
             }
 
-            file_data.meta.authors.forEach(async (author) => {
-                let { slug, id: authorID } = getID(author, "author");
-                if (!graph.hasNode(authorID)) {
-                    console.log(`add author node ${slug}`);
-                    graph.addNode(authorID, {
-                        label: author,
-                        slug: slug,
-                        cat: "author",
-                    });
+            Object.entries(metadata).forEach(([cat, data]) => {
+                data.forEach(async (item) => {
+                    if (!graph.hasNode(item.id)) {
+                        console.log(`add node type ${cat}: ${item.slug}`);
 
-                    let content = `<h1>${author}</h1>`;
+                        graph.addNode(item.id, {
+                            label: item.title,
+                            slug: item.slug,
+                            cat: cat,
+                        });
 
-                    if (fs.existsSync(`${config.folders.authors}/${slug}.md`)) {
-                        const author_data = await parseMarkdown(
-                            `${config.folders.authors}/${slug}.md`
-                        );
+                        let content = `<h1>${item.title}</h1>`;
 
-                        content = author_data.render;
+                        if (
+                            fs.existsSync(
+                                `${config.folders.data}/${cat}/${item.slug}.md`
+                            )
+                        ) {
+                            const item_data = await parseMarkdown(
+                                `${config.folders.data}/${cat}/${item.slug}.md`
+                            );
+
+                            content = item_data.render;
+                        }
+
+                        this.files_to_render.push({
+                            ...item,
+                            cat: cat,
+                            content: content,
+                        });
                     }
 
-                    this.files_to_render.push({
-                        cat: "author",
-                        id: authorID,
-                        title: author,
-                        slug: slug,
-                        content: content,
-                    });
-                }
-
-                graph.addEdge(authorID, id);
-                graph.addEdge(id, authorID);
-            });
-
-            file_data.meta.tags.forEach(async (tag) => {
-                const { slug, id: tagID } = getID(tag, "tag");
-                if (!graph.hasNode(tagID)) {
-                    console.log(`add tag node ${slug}`);
-                    graph.addNode(tagID, {
-                        label: tag,
-                        slug: slug,
-                        cat: "tag",
-                    });
-
-                    let content = `<h1>${tag}</h1>`;
-
-                    if (fs.existsSync(`${config.folders.tags}/${slug}.md`)) {
-                        const tag_data = await parseMarkdown(
-                            `${config.folders.tags}/${slug}.md`
-                        );
-
-                        content = tag_data.render;
-                    }
-
-                    this.files_to_render.push({
-                        cat: "tag",
-                        id: tagID,
-                        title: tag,
-                        slug: slug,
-                        content: content,
-                    });
-                }
-                graph.addEdge(tagID, id);
-                graph.addEdge(id, tagID);
+                    graph.addEdge(ressource_id, item.id);
+                    graph.addEdge(item.id, ressource_id);
+                });
             });
         }
 
@@ -183,11 +151,11 @@ module.exports = class Telescope {
             }
         });
 
-        if (config.hide_isolated_tags) {
+        if (config.hide_isolated_metadata) {
             graph.forEachNode((node, attributes) => {
                 if (
-                    graph.degree(node) <= config.isolated_tags_threshold &&
-                    attributes.cat === "tag"
+                    graph.degree(node) <= config.isolated_metadata_threshold &&
+                    attributes.cat !== "ressource"
                 ) {
                     graph.setNodeAttribute(node, "isolated", true);
                 }
@@ -235,32 +203,6 @@ module.exports = class Telescope {
                     };
                 });
 
-            let added_nodes = [];
-            if (graph.hasNode(data.id)) {
-                graph.forEachNeighbor(data.id, function (neighbor, attributes) {
-                    if (
-                        attributes.cat !== "author" &&
-                        neighbor != data.id &&
-                        !added_nodes.includes(neighbor)
-                    ) {
-                        added_nodes.push(neighbor);
-                    }
-
-                    graph.forEachNeighbor(
-                        neighbor,
-                        function (secondNeighbor, attributes) {
-                            if (
-                                attributes.cat !== "author" &&
-                                secondNeighbor != data.id &&
-                                !added_nodes.includes(secondNeighbor)
-                            ) {
-                                added_nodes.push(secondNeighbor);
-                            }
-                        }
-                    );
-                });
-            }
-
             export_links.push({
                 title: data.title,
                 url: `${data.cat}-${data.slug}.html`,
@@ -268,14 +210,10 @@ module.exports = class Telescope {
             Twig.renderFile(
                 "./src/template.twig",
                 {
-                    ...config,
+                    ...data,
+                    config: config,
                     timestamp: this.timestamp,
-                    title: data.title,
-                    content: data.content,
                     links: links,
-                    authors: data.authors,
-                    tags: data.tags,
-                    node: data.id,
                 },
                 (err, html) => {
                     html = minify(html, {
@@ -300,7 +238,7 @@ module.exports = class Telescope {
         Twig.renderFile(
             "./src/template.twig",
             {
-                ...config,
+                config: config,
                 timestamp: this.timestamp,
                 content: main_data.render,
             },
