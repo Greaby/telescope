@@ -24,6 +24,6 @@ module.exports = {
         node_max_size: 25,
     },
 
-    hide_isolated_tags: true,
+    hide_isolated_tags: false,
     isolated_tags_threshold: 2,
 };
