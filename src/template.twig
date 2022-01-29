@@ -36,7 +36,9 @@
                 <div class="content">{{ content }}</div>
 
                 <div class="metadata">
-                    {% if metadata %} {% for cat, data in metadata %}
+                    {% if metadata %} {% for cat, data in metadata %} {% if
+                    config.metadata[cat] == undefined or
+                    config.metadata[cat].display_on_page %}
                     <div class="tag-container">
                         <h3>
                             {% if config.metadata[cat].label %}
@@ -51,7 +53,7 @@
                         }}</a>
                         {% endfor %}
                     </div>
-                    {% endfor %} {% endif %}
+                    {% endif %} {% endfor %} {% endif %}
                 </div>
 
                 <div class="links">

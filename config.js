@@ -28,6 +28,8 @@ module.exports = {
         // tag: {
         //     label: "Tags",
         //     color: "#87AA66",
+        //     display_on_graph: false,
+        //     display_on_page: true,
         // },
     },
     hide_isolated_metadata: false,

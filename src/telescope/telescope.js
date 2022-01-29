@@ -103,15 +103,21 @@ module.exports = class Telescope {
             }
 
             Object.entries(metadata).forEach(([cat, data]) => {
+                const display_on_graph =
+                    !config.metadata[cat] ||
+                    config.metadata[cat].display_on_graph;
+
                 data.forEach(async (item) => {
                     if (!graph.hasNode(item.id)) {
                         console.log(`add node type ${cat}: ${item.slug}`);
 
-                        graph.addNode(item.id, {
-                            label: item.title,
-                            slug: item.slug,
-                            cat: cat,
-                        });
+                        if (display_on_graph) {
+                            graph.addNode(item.id, {
+                                label: item.title,
+                                slug: item.slug,
+                                cat: cat,
+                            });
+                        }
 
                         let content = `<h1>${item.title}</h1>`;
 
@@ -134,8 +140,10 @@ module.exports = class Telescope {
                         });
                     }
 
-                    graph.addEdge(ressource_id, item.id);
-                    graph.addEdge(item.id, ressource_id);
+                    if (display_on_graph) {
+                        graph.addEdge(ressource_id, item.id);
+                        graph.addEdge(item.id, ressource_id);
+                    }
                 });
             });
         }
