@@ -15,29 +15,13 @@ Telescope allows you to create a collaborative documentation that will be genera
 
 The project require Node.js 16+
 
-1. Clone this repository 
+1. Clone this repository
 2. Install the dependencies using the command `npm install`
 
-## Write your documentation
+## Documentation
 
-Unlike a wiki where the pages have a hierarchy. In Telescope, we add cards in which we add the content.
-Each card is structured in a [Markdown](https://www.markdownguide.org/getting-started/) file to define its metadata. This will be used to generate the static HTML pages.
-
-There are three types of cards: Resources, Authors and Tags.
-The main cards that is used to generate the graph are the resources. Authors and tags are automatically generated from the metadata of your resources.
-
-A card template is available [here](https://github.com/Greaby/telescope/blob/main/data/template.md)
-
-Add your content to the `data/ressources` folder
-
-The `index.md` file in the `data` folder is used to generate the `index.html` file. Modify it to add the home page of your project.
-
-## How to build the static website
-
-1. Be sure to change in `config.js` the `base_url` property to the URL of your website.
-2. Build the static website using the command `npm run build`
-3. Static HTML files are generated in the `dist` folder. Copy the content of this folder on your website.
+The documentation is available [here](https://greaby.github.io/telescope/)
 
 ## Sample projects using Telescope
 
-* [Galaxie GD](https://greaby.github.io/galaxie-gd/)
+-   [Galaxie GD](https://greaby.github.io/galaxie-gd/)

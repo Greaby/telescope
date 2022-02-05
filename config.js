@@ -25,12 +25,18 @@ module.exports = {
     },
 
     metadata: {
-        // tag: {
-        //     label: "Tags",
-        //     color: "#87AA66",
-        //     display_on_graph: true,
-        //     display_on_page: true,
-        // },
+        tag: {
+            label: "Tags",
+            color: "#87AA66",
+            display_on_graph: true,
+            display_on_page: true,
+        },
+        chapter: {
+            label: "Chapter",
+            color: "#4CB3D2",
+            display_on_graph: true,
+            display_on_page: true,
+        },
     },
     hide_isolated_metadata: false,
     isolated_metadata_threshold: 2,
