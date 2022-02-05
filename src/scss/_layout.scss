@@ -53,8 +53,19 @@ header {
     }
 }
 
-.content img {
-    max-width: 100%;
+.content {
+    margin-bottom: 1rem;
+
+    img {
+        max-width: 100%;
+    }
+
+    pre {
+        color: white;
+        background: black;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
 }
 
 #graph-container {
