@@ -34,7 +34,7 @@
     },
     "dependencies": {
         "fuse.js": "^6.5.3",
-        "graphology": "^0.23.2",
+        "graphology": "^0.24.0",
         "sigma": "^2.2.0"
     }
 }
